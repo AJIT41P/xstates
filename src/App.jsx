@@ -10,74 +10,34 @@ function App() {
   const [city, setCity] = useState("");
 
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch(
-          "https://location-selector.labs.crio.do/countries"
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch countries");
-        }
-
-        const data = await response.json();
-        setCountries(data);
-      } catch (error) {
-        setCountries([]);
-      }
-    };
-
-    fetchCountries();
+    fetch("https://location-selector.labs.crio.do/countries")
+      .then((res) => res.json())
+      .then((data) => setCountries(data))
+      .catch(() => setCountries([]));
   }, []);
 
   useEffect(() => {
     if (!country) return;
 
-    const fetchStates = async () => {
-      try {
-        const response = await fetch(
-          `https://location-selector.labs.crio.do/country=${country}/states`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch states");
-        }
-
-        const data = await response.json();
-        setStates(data);
-      } catch (error) {
-        setStates([]);
-      }
-    };
-
-    fetchStates();
+    fetch(`https://location-selector.labs.crio.do/country=${country}/states`)
+      .then((res) => res.json())
+      .then((data) => setStates(data))
+      .catch(() => setStates([]));
   }, [country]);
 
   useEffect(() => {
     if (!country || !state) return;
 
-    const fetchCities = async () => {
-      try {
-        const response = await fetch(
-          `https://location-selector.labs.crio.do/country=${country}/state=${state}/cities`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch cities");
-        }
-
-        const data = await response.json();
-        setCities(data);
-      } catch (error) {
-        setCities([]);
-      }
-    };
-
-    fetchCities();
+    fetch(
+      `https://location-selector.labs.crio.do/country=${country}/state=${state}/cities`
+    )
+      .then((res) => res.json())
+      .then((data) => setCities(data))
+      .catch(() => setCities([]));
   }, [country, state]);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <select
         value={country}
         onChange={(e) => {
@@ -90,11 +50,7 @@ function App() {
       >
         <option value="">Select Country</option>
         {countries.map((countryName) => (
-          <option
-            key={countryName}
-            value={countryName}
-            data-testid={countryName}
-          >
+          <option key={countryName} value={countryName}>
             {countryName}
           </option>
         ))}
@@ -111,11 +67,7 @@ function App() {
       >
         <option value="">Select State</option>
         {states.map((stateName) => (
-          <option
-            key={stateName}
-            value={stateName}
-            data-testid={stateName}
-          >
+          <option key={stateName} value={stateName}>
             {stateName}
           </option>
         ))}
@@ -128,11 +80,7 @@ function App() {
       >
         <option value="">Select City</option>
         {cities.map((cityName) => (
-          <option
-            key={cityName}
-            value={cityName}
-            data-testid={cityName}
-          >
+          <option key={cityName} value={cityName}>
             {cityName}
           </option>
         ))}
