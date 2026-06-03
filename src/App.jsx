@@ -10,33 +10,74 @@ function App() {
   const [city, setCity] = useState("");
 
   useEffect(() => {
-    fetch("https://location-selector.labs.crio.do/countries")
-      .then((res) => res.json())
-      .then((data) => setCountries(data));
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch(
+          "https://location-selector.labs.crio.do/countries"
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch countries");
+        }
+
+        const data = await response.json();
+        setCountries(data);
+      } catch (error) {
+        setCountries([]);
+      }
+    };
+
+    fetchCountries();
   }, []);
 
   useEffect(() => {
     if (!country) return;
 
-    fetch(`https://location-selector.labs.crio.do/country=${country}/states`)
-      .then((res) => res.json())
-      .then((data) => setStates(data));
+    const fetchStates = async () => {
+      try {
+        const response = await fetch(
+          `https://location-selector.labs.crio.do/country=${country}/states`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch states");
+        }
+
+        const data = await response.json();
+        setStates(data);
+      } catch (error) {
+        setStates([]);
+      }
+    };
+
+    fetchStates();
   }, [country]);
 
   useEffect(() => {
     if (!country || !state) return;
 
-    fetch(
-      `https://location-selector.labs.crio.do/country=${country}/state=${state}/cities`
-    )
-      .then((res) => res.json())
-      .then((data) => setCities(data));
-  }, [state]);
+    const fetchCities = async () => {
+      try {
+        const response = await fetch(
+          `https://location-selector.labs.crio.do/country=${country}/state=${state}/cities`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch cities");
+        }
+
+        const data = await response.json();
+        setCities(data);
+      } catch (error) {
+        setCities([]);
+      }
+    };
+
+    fetchCities();
+  }, [country, state]);
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Xstates Location Selector</h2>
-
       <select
         value={country}
         onChange={(e) => {
@@ -48,9 +89,13 @@ function App() {
         }}
       >
         <option value="">Select Country</option>
-        {countries.map((c) => (
-          <option key={c} value={c} data-testid={c}>
-            {c}
+        {countries.map((countryName) => (
+          <option
+            key={countryName}
+            value={countryName}
+            data-testid={countryName}
+          >
+            {countryName}
           </option>
         ))}
       </select>
@@ -65,9 +110,13 @@ function App() {
         }}
       >
         <option value="">Select State</option>
-        {states.map((s) => (
-          <option key={s} value={s} data-testid={s}>
-            {s}
+        {states.map((stateName) => (
+          <option
+            key={stateName}
+            value={stateName}
+            data-testid={stateName}
+          >
+            {stateName}
           </option>
         ))}
       </select>
@@ -78,9 +127,13 @@ function App() {
         onChange={(e) => setCity(e.target.value)}
       >
         <option value="">Select City</option>
-        {cities.map((c) => (
-          <option key={c} value={c} data-testid={c}>
-            {c}
+        {cities.map((cityName) => (
+          <option
+            key={cityName}
+            value={cityName}
+            data-testid={cityName}
+          >
+            {cityName}
           </option>
         ))}
       </select>
